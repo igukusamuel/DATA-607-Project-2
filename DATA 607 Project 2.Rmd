@@ -1,7 +1,7 @@
 ---
-title: "DATA 607 Assignment 5"
+title: "DATA 607 Project 2"
 author: "Samuel I Kigamba"
-date: "September 29, 2019"
+date: "October 06, 2019"
 output: html_document
 ---
 
@@ -9,21 +9,34 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The chart above describes arrival delays for two airlines across five destinations. Your task is to:
-(1) Create a .CSV file (or optionally, a MySQL database!) that includes all of the information above. You’re encouraged to use a “wide” structure similar to how the information appears above, so that you can practice tidying and transformations as described below.
-(2) Read the information from your .CSV file into R, and use tidyr and dplyr as needed to tidy and transform your data.
-(3) Perform analysis to compare the arrival delays for the two airlines.
-(4) Your code should be in an R Markdown file, posted to rpubs.com, and should include narrative descriptions of your data cleanup work, analysis, and conclusions. Please include in your homework submission:
-??? The URL to the .Rmd file in your GitHub repository. and
+DATA 607 - Project 2
+The goal of this assignment is to give you practice in preparing different datasets for downstream
+analysis work.
+Your task is to:
+(1) Choose any three of the "wide" datasets identified in the Week 5 Discussion items. (You may
+use your own dataset; please don't use my Sample Post dataset, since that was used in your
+Week 6 assignment!) For each of the three chosen datasets:
+??? Create a .CSV file (or optionally, a MySQL database!) that includes all of the information
+included in the dataset. You're encouraged to use a "wide" structure similar to how the
+information appears in the discussion item, so that you can practice tidying and
+transformations as described below.
+??? Read the information from your .CSV file into R, and use tidyr and dplyr as needed to
+tidy and transform your data. [Most of your grade will be based on this step!]
+??? Perform the analysis requested in the discussion item.
+??? Your code should be in an R Markdown file, posted to rpubs.com, and should include
+narrative descriptions of your data cleanup work, analysis, and conclusions.
+(2) Please include in your homework submission, for each of the three chosen datasets:
+??? The URL to the .Rmd file in your GitHub repository, and
 ??? The URL for your rpubs.com web page.
 
 
 #set working directory and Install all the relevant packages and load their respective libraries into R.
 ```{r, include=FALSE}
-#getwd()
-#setwd("C:/Users/iguku/Google Drive/R and SQL/CUNY MSc Data Science/Data 607/Assignment 5")
+getwd()
+setwd("C:/Users/iguku/Google Drive/R and SQL/CUNY MSc Data Science/Data 607/Project 2")
 ```
-```{r}
+
+```{r include=FALSE}
 library(stringr)
 library(tidyr)
 library(dplyr)
@@ -34,75 +47,315 @@ library(readr)
 ```
 
 # Upload the data into Github for ease of accessibility and testing by a wider audience.
-Follow this link to see uploaded .csv file (https://raw.githubusercontent.com/igukusamuel/DATA-607-Assignments/master/tidy_trans.csv)
+Follow this link to see uploaded Male migrants .csv file (https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockMale_2019.csv)
 
 ```{r}
-airlines <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Assignments/master/tidy_trans.csv")
-head(airlines, 5) #Print out first 5 rows to confirm that the data have been loaded correctly.
+male_migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockMale_2019.csv")
+
+#view(head(male_migrants, 20)) # vIew data frame structure and see how many rows to skip.
 ```
 
-```{r include=FALSE}
-x <- nrow(airlines) 
-x
-```
+# As part of data cleanup, skip the first 15 rows that include source information nor relevant to out analysis.
 
-# Fill in the missing cell values. Note one can as well use the fill() function.
 ```{r}
-airlines[2,1] <- airlines[1,1]
-airlines[5,1] <- airlines[4,1]
-airlines[,2] <- sapply(airlines[,2], str_replace, " ", "_")
+male_migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockMale_2019.csv", skip = 15)
 
-airlines <- na.omit(airlines) # To omit the null/empty rows
-
-head(airlines)
-
-names(airlines) #Column names before renaming the first and second columns.
+head(male_migrants, 20) #Print out first 20 rows to confirm that the data have been loaded correctly.
 ```
 
-#Rename first and second columns using the dplyr rename() function.
+# Careful review of the data shows that column named X6 only includes data for rows related to countries and N/A's for rows relating to regions and regional totals. Thus filtering out all N/As in column X6 will leave us with country data only, which is the basis of out analysis. We first view all the N/As under column X6 to confirm none of them relate to country information.
+
 ```{r}
-airlines <- dplyr::rename(airlines, carrier = X1)
-airlines <- dplyr::rename(airlines, arrival_type = X2)
+colX6 <- filter(male_migrants, is.na(X6))
 
-names(airlines) #Column names after renaming the first and second columns.
+x <- length(colX6)
+
+head(colX6, x)
+
 ```
 
 
-# Use the gather() function to include all the cities in the separate columns [3-7] into a single column named city.
+# We then exclude all N/A's in column X6 and print out the first 6 rows using the head() function.
+
 ```{r}
-airlines <- gather(airlines, "city", "n", 3:7)
-head(airlines)
+male_migrants_by_country <- filter(male_migrants, !is.na(X6))
+
+head(male_migrants_by_country)
 ```
 
-#Use the spread() function provided in the dplyr package to spread the elements of column named arrival_type into separate columns named "delayed" and "on_time"
+# From the above print out, there is need to rename column X1 and X3 as year and country_to respectively.
 ```{r}
-airlines <- spread(airlines, "arrival_type", "n")
-airlines
-
-dplyr::glimpse(airlines) #use the dplyr function glimpse() to view all the columns of the resulting data frame.
+male_migrants_by_country <- male_migrants_by_country %>% 
+        rename(
+                year = X1,
+                country_to = X3
+        )
+head(male_migrants_by_country)
 ```
 
-# Use the mutate() function in dplyr to add new columns and respective values into the data frame. note that the mutate function does not alter the structure of the initial data frame unless its assigned to an object.
+#The above printout shows a number of irrelevant columns that are not necessary for our analysis. Lets print out the entire column names and delete the unnecessary ones to have a cleaner data set.
 ```{r}
-airlines <- mutate(airlines, total_arrivals = delayed + on_time)
-airlines <- mutate(airlines, rate_on_time = on_time/total_arrivals)
-
-head(airlines)
-
+colnames(male_migrants_by_country)
 ```
 
+#The above print out reveals that we do not need all column names that start with "X", "Total" or "Other". We delete these columns using the srtarts_with function.
 
-#select city and ontime and delayed columns
 ```{r}
-select(airlines, city, on_time, delayed)
+male_migrants_by_country <- male_migrants_by_country %>% 
+        select(-starts_with("X"), -starts_with("Other"), -starts_with("Total"))
 
+head(male_migrants_by_country)
 ```
 
-#USe the pipe operator to perform multiple operations
+#We use dim() function to have an idea of how many rows and columns we have for our analysis.
 ```{r}
-airlines %>% summarise(mean = mean(on_time), median = median(on_time), n = n())
+dim(male_migrants_by_country)
+```
 
-airlines %>% group_by(on_time) %>% 
-        arrange(desc(rate_on_time))
+# The print out below is a confrimation of the column names. This is what we need for our analysis.
+
+```{r}
+colnames(male_migrants_by_country)
+```
+
+
+# GEt the length of the column names to be used in the next line of code.
+```{r}
+y <- length(colnames(male_migrants_by_country))
+
+y 
+```
+
+#Let us use gather() function to gather all columns with country names from the 3rd column spanning the entire length of the columns into a single column and exclude any and all N/As to obtain clean data.
+```{r}
+no_of_migrants_per_country <- gather(male_migrants_by_country, "country_from", "no_of_migrants", 3:y, na.rm = TRUE)
+
+no_of_migrants_per_country
+```
+
+#convert the no_of_migrants data column from characters to doubles for statistical analysis. This we will do using the parse_number() function. Print out using head() function the first 6 rows and confirm this conversion.
+
+```{r}
+no_of_migrants_per_country$no_of_migrants <- parse_number(no_of_migrants_per_country$no_of_migrants)
+
+clean_male_data <- no_of_migrants_per_country
+
+head(clean_male_data)
+```
+
+# Let us perform some statistical analysis by:
+
+#Ordering data by country with largest inflow of male migrants
+
+```{r}
+by_country_to <- clean_male_data %>% 
+        group_by(year, country_from, country_to) %>% 
+        summarise(total_male_migrants = sum(no_of_migrants)) %>% 
+        arrange(desc(total_male_migrants))
+head(by_country_to)
+```
+
+#Ordering the data by the total no of male migrants since 1995 to 2019.
+
+```{r}
+total_migrants_since_1995 <- clean_male_data %>% 
+        group_by(country_from, country_to) %>% 
+        summarise(total_male_migrants = sum(no_of_migrants)) %>% 
+        arrange(desc(total_male_migrants))
+head(total_migrants_since_1995)
+```
+
+# Ordering the data by the countries sending out the least number of migrants
+```{r}
+least_no_migrants_from <- clean_male_data %>% 
+        group_by(country_from) %>% 
+        summarise(total_migrants_since_1995 = sum(no_of_migrants)) %>% 
+        arrange(total_migrants_since_1995)
+head(least_no_migrants_from)
+```
+
+#Ordering the data by the countries receiving the largest number of imigrants since 1995.
+
+```{r}
+largest_no_migrants_to <- clean_male_data %>% 
+        group_by(country_to) %>% 
+        summarise(total_migrants_since_1995 = sum(no_of_migrants)) %>% 
+        arrange(desc(total_migrants_since_1995))
+head(largest_no_migrants_to)
+```
+
+# Ordering the data by the countries receiving the least number of imigrants since 1995.
+
+```{r}
+least_no_migrants_to <- clean_male_data %>% 
+        group_by(country_to) %>% 
+        summarise(total_migrants_since_1995 = sum(no_of_migrants)) %>% 
+        arrange(total_migrants_since_1995)
+
+head(least_no_migrants_to)
+```
+
+#Conclusion: 
+#The top 5 countries receiving the largest mumber of male migrants are USA, Rusia Federation, Saudi Arabia, GErmany and France
+#The top 5 countries receiving the least mumber of male migrants are Tivalu, Saint Helena, Tokelau, Niue and Saint Pierre and Miqueton
+
+
+
+
+
+
+Women migrants
+
+The second section will involve replicating the code above to analyse the immigration data on women migrants. This will serve as a confirmation of the replicability of the code to similar data.
+
+Follow this link to see uploaded female migrants .csv file (https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockFemale_2019.csv)
+
+```{r}
+female_migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockFemale_2019.csv")
+
+#view(head(female_migrants, 20)) # vIew data frame structure and see how many rows to skip.
+```
+
+# As part of data cleanup, skip the first 15 rows that include source information nor relevant to out analysis.
+
+```{r}
+female_migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockFemale_2019.csv", skip = 15)
+
+head(female_migrants, 20) #Print out first 20 rows to confirm that the data have been loaded correctly.
+```
+
+# Careful review of the data shows that column named X6 only includes data for rows related to countries and N/A's for rows relating to regions and regional totals. Thus filtering out all N/As in column X6 will leave us with country data only, which is the basis of out analysis. We first view all the N/As under column X6 to confirm none of them relate to country information.
+
+```{r}
+colX6 <- filter(female_migrants, is.na(X6))
+
+a <- length(colX6)
+
+head(colX6, a)
 
 ```
+
+
+# We then exclude all N/A's in column X6 and print out the first 6 rows using the head() function.
+
+```{r}
+female_migrants_by_country <- filter(female_migrants, !is.na(X6))
+
+head(female_migrants_by_country)
+```
+
+# From the above print out, there is need to rename column X1 and X3 as year and country_to respectively.
+```{r}
+female_migrants_by_country <- female_migrants_by_country %>% 
+        rename(
+                year = X1,
+                country_to = X3
+        )
+head(female_migrants_by_country)
+```
+
+#The above printout shows a number of irrelevant columns that are not necessary for our analysis. Lets print out the entire column names and delete the unnecessary ones to have a cleaner data set.
+```{r}
+colnames(female_migrants_by_country)
+```
+
+#The above print out reveals that we do not need all column names that start with "X", "Total" or "Other". We delete these columns using the srtarts_with function.
+
+```{r}
+female_migrants_by_country <- female_migrants_by_country %>% 
+        select(-starts_with("X"), -starts_with("Other"), -starts_with("Total"))
+
+head(female_migrants_by_country)
+```
+
+#We use dim() function to have an idea of how many rows and columns we have for our analysis.
+```{r}
+dim(female_migrants_by_country)
+```
+
+# The print out below is a confrimation of the column names. This is what we need for our analysis.
+
+```{r}
+colnames(female_migrants_by_country)
+```
+
+
+# GEt the length of the column names to be used in the next line of code.
+```{r}
+y <- length(colnames(female_migrants_by_country))
+
+y 
+```
+
+#Let us use gather() function to gather all columns with country names from the 3rd column spanning the entire length of the columns into a single column and exclude any and all N/As to obtain clean data.
+```{r}
+no_of_female_migrants_per_country <- gather(female_migrants_by_country, "country_from", "no_of_female_migrants", 3:y, na.rm = TRUE)
+
+no_of_female_migrants_per_country
+```
+
+#convert the no_of_migrants data column from characters to doubles for statistical analysis. This we will do using the parse_number() function. Print out using head() function the first 6 rows and confirm this conversion.
+
+```{r}
+no_of_female_migrants_per_country$no_of_female_migrants <- parse_number(no_of_female_migrants_per_country$no_of_female_migrants)
+
+clean_female_data <- no_of_female_migrants_per_country
+
+head(clean_female_data)
+```
+
+# Let us perform some statistical analysis by:
+
+#Ordering data by country with largest inflow of male migrants
+
+```{r}
+female_by_country_to <- clean_female_data %>% 
+        group_by(year, country_from, country_to) %>% 
+        summarise(total_female_migrants = sum(no_of_female_migrants)) %>% 
+        arrange(desc(total_female_migrants))
+head(female_by_country_to)
+```
+
+#Ordering the data by the total no of male migrants since 1995 to 2019.
+
+```{r}
+total_female_migrants_since_1995 <- clean_female_data %>% 
+        group_by(country_from, country_to) %>% 
+        summarise(total_female_migrants = sum(no_of_female_migrants)) %>% 
+        arrange(desc(total_female_migrants))
+head(total_female_migrants_since_1995)
+```
+
+# Ordering the data by the countries sending out the least number of migrants
+```{r}
+least_no_female_migrants_from <- clean_female_data %>% 
+        group_by(country_from) %>% 
+        summarise(total_female_migrants_since_1995 = sum(no_of_female_migrants)) %>% 
+        arrange(total_female_migrants_since_1995)
+head(least_no_female_migrants_from)
+```
+
+#Ordering the data by the countries receiving the largest number of imigrants since 1995.
+
+```{r}
+largest_no_female_migrants_to <- clean_female_data %>% 
+        group_by(country_to) %>% 
+        summarise(total_female_migrants_since_1995 = sum(no_of_female_migrants)) %>% 
+        arrange(desc(total_female_migrants_since_1995))
+head(largest_no_female_migrants_to)
+```
+
+# Ordering the data by the countries receiving the least number of imigrants since 1995.
+
+```{r}
+least_no_female_migrants_to <- clean_female_data %>% 
+        group_by(country_to) %>% 
+        summarise(total_female_migrants_since_1995 = sum(no_of_female_migrants)) %>% 
+        arrange(total_female_migrants_since_1995)
+
+head(least_no_female_migrants_to)
+```
+
+#Conclusion: 
+#The top 5 countries receiving the largest mumber of female migrants are USA, Rusia Federation, Germany, France and United Kingdom.
+#The top 5 countries receiving the least mumber of female migrants are Saint Helena, Tivalu, Tokelau, Niue and Micronesia (Fed. States of).
