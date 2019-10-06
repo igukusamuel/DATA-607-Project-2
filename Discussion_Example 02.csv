@@ -5,9 +5,9 @@ Data Source: Enterprise Data Warehouse,,,,,,
  ,Grants,,Loans,,Total,
 Age,Disbursements,Recipients,Disbursements,Recipients,Disbursements,Recipients
 ,(in billions),(in thousands),(in billions),(in thousands),(in billions),(in thousands)
-18 or Younger,$4.6,"1,010.2",$8.1,893.2,$12.8,"1,496.9"
-19 to 24,$15.3,"3,606.8",$41.9,"3,853.2",$57.1,"5,675.4"
-25 to 34,$6.0,"1,631.7",$28.1,"1,954.8",$34.0,"2,676.5"
-35 to 49,$2.7,738.4,$12.0,"1,018.1",$14.6,"1,321.5"
-50 to 61,$0.4,129.9,$2.4,206.1,$2.8,262.0
-62 and Older,$0.1,17.4,$0.3,22.6,$0.3,31.2
+18 or Younger, 5 ," 1,010 ", 8 , 893 , 13 ," 1,497 "
+19 to 24, 15 ," 3,607 ", 42 ," 3,853 ", 57 ," 5,675 "
+25 to 34, 6 ," 1,632 ", 28 ," 1,955 ", 34 ," 2,677 "
+35 to 49, 3 , 738 , 12 ," 1,018 ", 15 ," 1,322 "
+50 to 61, 0 , 130 , 2 , 206 , 3 , 262 
+62 and Older, 0 , 17 , 0 , 23 , 0 , 31 
