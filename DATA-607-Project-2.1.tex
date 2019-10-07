@@ -1,0 +1,613 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 607 Project 2},
+            pdfauthor={Samuel I Kigamba},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{DATA 607 Project 2}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Samuel I Kigamba}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{October 06, 2019}
+
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\section{--------------------------------------------------------------------------------}\label{section}
+
+\section{\texorpdfstring{\clearpage}{}}\label{section-1}
+
+DATA 607 Project 2.
+
+The goal of this assignment is to give you practice in preparing
+different datasets for downstream analysis work. Your task is to: (1)
+Choose any three of the ``wide'' datasets identified in the Week 5
+Discussion items. (You may use your own dataset; please don't use my
+Sample Post dataset, since that was used in your Week 6 assignment!) For
+each of the three chosen datasets: ??? Create a .CSV file (or
+optionally, a MySQL database!) that includes all of the information
+included in the dataset. You're encouraged to use a ``wide'' structure
+similar to how the information appears in the discussion item, so that
+you can practice tidying and transformations as described below. ???
+Read the information from your .CSV file into R, and use tidyr and dplyr
+as needed to tidy and transform your data. {[}Most of your grade will be
+based on this step!{]} ??? Perform the analysis requested in the
+discussion item. ??? Your code should be in an R Markdown file, posted
+to rpubs.com, and should include narrative descriptions of your data
+cleanup work, analysis, and conclusions. (2) Please include in your
+homework submission, for each of the three chosen datasets: ??? The URL
+to the .Rmd file in your GitHub repository, and ??? The URL for your
+rpubs.com web page.
+
+set working directory and Install all the relevant packages and load
+their respective libraries into R.
+
+\section{Male migrants}\label{male-migrants}
+
+\subsection{Load the following
+libraries}\label{load-the-following-libraries}
+
+\paragraph{library(stringr)}\label{librarystringr}
+
+\paragraph{library(tidyr)}\label{librarytidyr}
+
+\paragraph{library(dplyr)}\label{librarydplyr}
+
+\paragraph{library(tidyverse)}\label{librarytidyverse}
+
+\paragraph{library(tibble)}\label{librarytibble}
+
+\paragraph{library(caret)}\label{librarycaret}
+
+\paragraph{library(readr)}\label{libraryreadr}
+
+\subsection{Upload the data into
+Github}\label{upload-the-data-into-github}
+
+This will ensure that everyone with access to the github repository can
+easily audit or retest the data. This ensures ease of accessibility and
+testing by a wide audience. Follow this link to see uploaded Male
+migrants .csv file
+(\url{https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv})
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{migrants <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv"}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(migrants)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 26
+##   X1    X2    X3    X4    X5      X6    X7    X8    X9    X10   X11   X12  
+##   <chr> <chr> <chr> <chr> <chr>   <chr> <chr> <chr> <chr> <chr> <chr> <chr>
+## 1 <NA>  <NA>  <NA>  <NA>  <NA>    <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## 2 <NA>  <NA>  <NA>  <NA>  <NA>    <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## 3 <NA>  <NA>  <NA>  <NA>  <NA>    <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## 4 <NA>  <NA>  <NA>  <NA>  United~ <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## 5 <NA>  <NA>  <NA>  <NA>  Popula~ <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## 6 <NA>  <NA>  <NA>  <NA>  Depart~ <NA>  <NA>  <NA>  <NA>  <NA>  <NA>  <NA> 
+## # ... with 14 more variables: X13 <chr>, X14 <chr>, X15 <chr>, X16 <chr>,
+## #   X17 <chr>, X18 <chr>, X19 <chr>, X20 <chr>, X21 <chr>, X22 <chr>,
+## #   X23 <chr>, X24 <chr>, X25 <chr>, X26 <chr>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#view(head(male_migrants, 20)) # vIew data frame structure and see how many rows to skip.}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Skip first 15 rows}\label{skip-first-15-rows}
+
+As part of data cleanup, skip the first 15 rows that include source
+information not relevant to out analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{migrants <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv"}\NormalTok{, }\DataTypeTok{skip =} \DecValTok{15}\NormalTok{)}
+
+\KeywordTok{head}\NormalTok{(migrants) }\CommentTok{#Print out first few rows to confirm that the data have been loaded correctly.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 26
+##      X1 X2    X3       X4 X5    `1990` `1995` `2000` `2005` `2010` `2015`
+##   <dbl> <chr> <chr> <dbl> <chr> <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
+## 1     1 WORLD <NA>    900 <NA>  153,0~ 161,3~ 173,5~ 191,6~ 220,7~ 248,8~
+## 2     2 UN d~ <NA>     NA <NA>  ..     ..     ..     ..     ..     ..    
+## 3     3 More~ b       901 <NA>  82,76~ 92,93~ 103,9~ 116,6~ 130,6~ 140,6~
+## 4     4 Less~ c       902 <NA>  70,24~ 68,38~ 69,62~ 74,92~ 90,16~ 108,2~
+## 5     5 Leas~ d       941 <NA>  11,06~ 11,68~ 10,06~ 9,833~ 10,43~ 13,63~
+## 6     6 Less~ <NA>    934 <NA>  59,18~ 56,70~ 59,56~ 65,09~ 79,73~ 94,58~
+## # ... with 15 more variables: `2019` <chr>, `1990_1` <chr>,
+## #   `1995_1` <chr>, `2000_1` <chr>, `2005_1` <chr>, `2010_1` <chr>,
+## #   `2015_1` <chr>, `2019_1` <chr>, `1990_2` <chr>, `1995_2` <chr>,
+## #   `2000_2` <chr>, `2005_2` <chr>, `2010_2` <chr>, `2015_2` <chr>,
+## #   `2019_2` <chr>
+\end{verbatim}
+
+\subsection{Filter for N/As in column
+X6}\label{filter-for-nas-in-column-x6}
+
+Careful review of the data shows that column named X5 only includes data
+for rows related to countries and N/A's for rows relating to regions and
+regional totals. Thus filtering out all N/As in column X5 will leave us
+with country data only, which is the basis of out analysis. We first
+view all the N/As under column X5 to confirm none of them relate to
+country information.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{colX5 <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(migrants, }\KeywordTok{is.na}\NormalTok{(X5))}
+
+\NormalTok{x <-}\StringTok{ }\KeywordTok{length}\NormalTok{(colX5)}
+\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 26
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(colX5)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 26
+##      X1 X2    X3       X4 X5    `1990` `1995` `2000` `2005` `2010` `2015`
+##   <dbl> <chr> <chr> <dbl> <chr> <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
+## 1     1 WORLD <NA>    900 <NA>  153,0~ 161,3~ 173,5~ 191,6~ 220,7~ 248,8~
+## 2     2 UN d~ <NA>     NA <NA>  ..     ..     ..     ..     ..     ..    
+## 3     3 More~ b       901 <NA>  82,76~ 92,93~ 103,9~ 116,6~ 130,6~ 140,6~
+## 4     4 Less~ c       902 <NA>  70,24~ 68,38~ 69,62~ 74,92~ 90,16~ 108,2~
+## 5     5 Leas~ d       941 <NA>  11,06~ 11,68~ 10,06~ 9,833~ 10,43~ 13,63~
+## 6     6 Less~ <NA>    934 <NA>  59,18~ 56,70~ 59,56~ 65,09~ 79,73~ 94,58~
+## # ... with 15 more variables: `2019` <chr>, `1990_1` <chr>,
+## #   `1995_1` <chr>, `2000_1` <chr>, `2005_1` <chr>, `2010_1` <chr>,
+## #   `2015_1` <chr>, `2019_1` <chr>, `1990_2` <chr>, `1995_2` <chr>,
+## #   `2000_2` <chr>, `2005_2` <chr>, `2010_2` <chr>, `2015_2` <chr>,
+## #   `2019_2` <chr>
+\end{verbatim}
+
+\subsection{Exclude N/As in column X5}\label{exclude-nas-in-column-x5}
+
+We then exclude all N/A's in column X6 and print out the first 6 rows
+using the head() function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{migrants_by_country <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(migrants, }\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(X5))}
+
+\KeywordTok{head}\NormalTok{(migrants_by_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 26
+##      X1 X2    X3       X4 X5    `1990` `1995` `2000` `2005` `2010` `2015`
+##   <dbl> <chr> <chr> <dbl> <chr> <chr>  <chr>  <chr>  <chr>  <chr>  <chr> 
+## 1    24 Buru~ <NA>    108 B R   333,1~ 254,8~ 125,6~ 172,8~ 235,2~ 289,8~
+## 2    25 Como~ <NA>    174 B     14,079 13,939 13,799 13,209 12,618 12,555
+## 3    26 Djib~ <NA>    262 B R   122,2~ 99,774 100,5~ 92,091 101,5~ 112,3~
+## 4    27 Erit~ <NA>    232 I     11,848 12,400 12,952 14,314 15,676 15,941
+## 5    28 Ethi~ <NA>    231 B R   1,155~ 806,9~ 611,3~ 514,2~ 568,7~ 1,161~
+## 6    29 Kenya <NA>    404 B R   298,0~ 618,7~ 707,8~ 773,3~ 954,9~ 1,126~
+## # ... with 15 more variables: `2019` <chr>, `1990_1` <chr>,
+## #   `1995_1` <chr>, `2000_1` <chr>, `2005_1` <chr>, `2010_1` <chr>,
+## #   `2015_1` <chr>, `2019_1` <chr>, `1990_2` <chr>, `1995_2` <chr>,
+## #   `2000_2` <chr>, `2005_2` <chr>, `2010_2` <chr>, `2015_2` <chr>,
+## #   `2019_2` <chr>
+\end{verbatim}
+
+\subsection{Rename column X2}\label{rename-column-x2}
+
+From the above print out, there is need to rename column X2
+dest\_country.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{migrants_by_country <-}\StringTok{ }\NormalTok{migrants_by_country }\OperatorTok{%>%}\StringTok{ }
+\StringTok{        }\KeywordTok{rename}\NormalTok{(}
+                \DataTypeTok{dest_country =}\NormalTok{ X2}
+\NormalTok{        )}
+\KeywordTok{head}\NormalTok{(migrants_by_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 26
+##      X1 dest_country X3       X4 X5    `1990` `1995` `2000` `2005` `2010`
+##   <dbl> <chr>        <chr> <dbl> <chr> <chr>  <chr>  <chr>  <chr>  <chr> 
+## 1    24 Burundi      <NA>    108 B R   333,1~ 254,8~ 125,6~ 172,8~ 235,2~
+## 2    25 Comoros      <NA>    174 B     14,079 13,939 13,799 13,209 12,618
+## 3    26 Djibouti     <NA>    262 B R   122,2~ 99,774 100,5~ 92,091 101,5~
+## 4    27 Eritrea      <NA>    232 I     11,848 12,400 12,952 14,314 15,676
+## 5    28 Ethiopia     <NA>    231 B R   1,155~ 806,9~ 611,3~ 514,2~ 568,7~
+## 6    29 Kenya        <NA>    404 B R   298,0~ 618,7~ 707,8~ 773,3~ 954,9~
+## # ... with 16 more variables: `2015` <chr>, `2019` <chr>, `1990_1` <chr>,
+## #   `1995_1` <chr>, `2000_1` <chr>, `2005_1` <chr>, `2010_1` <chr>,
+## #   `2015_1` <chr>, `2019_1` <chr>, `1990_2` <chr>, `1995_2` <chr>,
+## #   `2000_2` <chr>, `2005_2` <chr>, `2010_2` <chr>, `2015_2` <chr>,
+## #   `2019_2` <chr>
+\end{verbatim}
+
+\subsection{View all columns}\label{view-all-columns}
+
+The above printout shows a number of irrelevant columns that are not
+necessary for our analysis. Lets print out the entire column names and
+delete the unnecessary ones to have a cleaner data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{column_names <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(migrants_by_country)}
+\CommentTok{#column_names # umcomment to view entire list of column names}
+\KeywordTok{head}\NormalTok{(column_names)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "X1"           "dest_country" "X3"           "X4"          
+## [5] "X5"           "1990"
+\end{verbatim}
+
+\subsection{Exclude irrelevant
+columns}\label{exclude-irrelevant-columns}
+
+The above print out reveals that we do not need all column names that
+start with ``X''. We delete these columns using the srtarts\_with
+function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{migrants_by_country <-}\StringTok{ }\NormalTok{migrants_by_country }\OperatorTok{%>%}\StringTok{ }
+\StringTok{        }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"X"}\NormalTok{))}
+
+
+\NormalTok{migrants_by_country <-}\StringTok{ }\NormalTok{migrants_by_country }\OperatorTok{%>%}\StringTok{ }
+\StringTok{        }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\OperatorTok{:}\DecValTok{8}\NormalTok{))}
+
+\NormalTok{migrants_by_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 232 x 15
+##    dest_country `1990_1` `1995_1` `2000_1` `2005_1` `2010_1` `2015_1`
+##    <chr>        <chr>    <chr>    <chr>    <chr>    <chr>    <chr>   
+##  1 Burundi      163,267  124,165  61,094   84,805   115,823  142,790 
+##  2 Comoros      6,717    6,614    6,511    6,286    6,060    6,071   
+##  3 Djibouti     64,242   52,476   52,920   51,315   53,295   59,081  
+##  4 Eritrea      6,228    6,542    6,856    7,729    8,603    8,833   
+##  5 Ethiopia     607,284  424,117  322,219  269,725  298,069  591,409 
+##  6 Kenya        161,259  322,189  352,933  400,364  473,093  562,909 
+##  7 Madagascar   13,348   11,901   13,276   14,744   16,410   18,270  
+##  8 Malawi       546,520  116,198  111,530  105,931  103,869  110,893 
+##  9 Mauritius    1,763    3,228    5,705    8,943    13,188   15,832  
+## 10 Mayotte      8,780    14,679   23,546   31,364   34,500   34,235  
+## # ... with 222 more rows, and 8 more variables: `2019_1` <chr>,
+## #   `1990_2` <chr>, `1995_2` <chr>, `2000_2` <chr>, `2005_2` <chr>,
+## #   `2010_2` <chr>, `2015_2` <chr>, `2019_2` <chr>
+\end{verbatim}
+
+\subsection{View dimentions of resulting data
+frame}\label{view-dimentions-of-resulting-data-frame}
+
+We use dim() function to have an idea of how many rows and columns we
+have for our analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dim}\NormalTok{(migrants_by_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 232  15
+\end{verbatim}
+
+\subsection{Confrim column names.}\label{confrim-column-names.}
+
+This is what we need for our analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{column_names_clean <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(migrants_by_country)}
+\CommentTok{#column_names_clean # uncomment to view entire list of cleaned up column names}
+\KeywordTok{head}\NormalTok{(column_names_clean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "dest_country" "1990_1"       "1995_1"       "2000_1"      
+## [5] "2005_1"       "2010_1"
+\end{verbatim}
+
+\subsection{View number of columns}\label{view-number-of-columns}
+
+Get the length of the column names to be used in the next line of code.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{y <-}\StringTok{ }\KeywordTok{length}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(migrants_by_country))}
+
+\NormalTok{y }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 15
+\end{verbatim}
+
+\subsection{clean up data}\label{clean-up-data}
+
+Let us use gather() function to gather all columns with years into a
+single columns and exclude any and all N/As to obtain clean data. Spread
+the resulting data by year column and rename ``1'' as male and ``2'' as
+female.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\KeywordTok{gather}\NormalTok{(migrants_by_country, }\StringTok{"year"}\NormalTok{, }\StringTok{"no_of_migrants"}\NormalTok{, }\DecValTok{2}\OperatorTok{:}\NormalTok{y, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{))}
+
+\KeywordTok{head}\NormalTok{(no_of_migrants_per_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 3
+##   dest_country year   no_of_migrants
+##   <chr>        <chr>  <chr>         
+## 1 Burundi      1990_1 163,267       
+## 2 Comoros      1990_1 6,717         
+## 3 Djibouti     1990_1 64,242        
+## 4 Eritrea      1990_1 6,228         
+## 5 Ethiopia     1990_1 607,284       
+## 6 Kenya        1990_1 161,259
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country <-}\StringTok{ }\NormalTok{no_of_migrants_per_country }\OperatorTok{%>%}
+\StringTok{        }\KeywordTok{separate}\NormalTok{(year, }\KeywordTok{c}\NormalTok{(}\StringTok{"year"}\NormalTok{, }\StringTok{"sex"}\NormalTok{), }\DataTypeTok{sep =} \StringTok{"_"}\NormalTok{)}
+
+\NormalTok{no_of_migrants_per_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,248 x 4
+##    dest_country year  sex   no_of_migrants
+##    <chr>        <chr> <chr> <chr>         
+##  1 Burundi      1990  1     163,267       
+##  2 Comoros      1990  1     6,717         
+##  3 Djibouti     1990  1     64,242        
+##  4 Eritrea      1990  1     6,228         
+##  5 Ethiopia     1990  1     607,284       
+##  6 Kenya        1990  1     161,259       
+##  7 Madagascar   1990  1     13,348        
+##  8 Malawi       1990  1     546,520       
+##  9 Mauritius    1990  1     1,763         
+## 10 Mayotte      1990  1     8,780         
+## # ... with 3,238 more rows
+\end{verbatim}
+
+Convert the years column to number format
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country}\OperatorTok{$}\NormalTok{year <-}\StringTok{ }\KeywordTok{parse_number}\NormalTok{(no_of_migrants_per_country}\OperatorTok{$}\NormalTok{year)}
+
+\NormalTok{no_of_migrants_per_country}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,248 x 4
+##    dest_country  year sex   no_of_migrants
+##    <chr>        <dbl> <chr> <chr>         
+##  1 Burundi       1990 1     163,267       
+##  2 Comoros       1990 1     6,717         
+##  3 Djibouti      1990 1     64,242        
+##  4 Eritrea       1990 1     6,228         
+##  5 Ethiopia      1990 1     607,284       
+##  6 Kenya         1990 1     161,259       
+##  7 Madagascar    1990 1     13,348        
+##  8 Malawi        1990 1     546,520       
+##  9 Mauritius     1990 1     1,763         
+## 10 Mayotte       1990 1     8,780         
+## # ... with 3,238 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country <-}\StringTok{ }\NormalTok{no_of_migrants_per_country }\OperatorTok{%>%}
+\StringTok{        }\KeywordTok{spread}\NormalTok{(sex, no_of_migrants)}
+        
+
+\KeywordTok{names}\NormalTok{(no_of_migrants_per_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "dest_country" "year"         "1"            "2"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country <-}\StringTok{ }\NormalTok{no_of_migrants_per_country }\OperatorTok{%>%}\StringTok{ }
+\StringTok{        }\KeywordTok{rename}\NormalTok{(}
+                \DataTypeTok{male =} \StringTok{"1"}\NormalTok{,}
+                \DataTypeTok{female =} \StringTok{"2"}
+\NormalTok{        )}
+\KeywordTok{head}\NormalTok{(no_of_migrants_per_country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 4
+##   dest_country  year male    female 
+##   <chr>        <dbl> <chr>   <chr>  
+## 1 Afghanistan   1990 32,558  25,128 
+## 2 Afghanistan   1995 39,105  32,417 
+## 3 Afghanistan   2000 42,848  33,069 
+## 4 Afghanistan   2005 49,274  38,026 
+## 5 Afghanistan   2010 57,709  44,537 
+## 6 Afghanistan   2015 248,212 241,537
+\end{verbatim}
+
+\subsection{Conversion of chr to dbl}\label{conversion-of-chr-to-dbl}
+
+convert the no\_of\_migrants data column from characters to doubles for
+statistical analysis. This we will do using the parse\_number()
+function. Print out using head() function the first 6 rows and confirm
+this conversion.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{no_of_migrants_per_country}\OperatorTok{$}\NormalTok{male <-}\StringTok{ }\KeywordTok{parse_number}\NormalTok{(no_of_migrants_per_country}\OperatorTok{$}\NormalTok{male)}
+\NormalTok{no_of_migrants_per_country}\OperatorTok{$}\NormalTok{female <-}\StringTok{ }\KeywordTok{parse_number}\NormalTok{(no_of_migrants_per_country}\OperatorTok{$}\NormalTok{female)}
+
+\NormalTok{clean_migrants_data <-}\StringTok{ }\NormalTok{no_of_migrants_per_country}
+
+\KeywordTok{head}\NormalTok{(clean_migrants_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 4
+##   dest_country  year   male female
+##   <chr>        <dbl>  <dbl>  <dbl>
+## 1 Afghanistan   1990  32558  25128
+## 2 Afghanistan   1995  39105  32417
+## 3 Afghanistan   2000  42848  33069
+## 4 Afghanistan   2005  49274  38026
+## 5 Afghanistan   2010  57709  44537
+## 6 Afghanistan   2015 248212 241537
+\end{verbatim}
+
+
+\end{document}

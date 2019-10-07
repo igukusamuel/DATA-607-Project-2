@@ -428,3 +428,219 @@ head(least_no_female_migrants_to)
 #Conclusion: 
 The top 5 countries receiving the largest mumber of female migrants are USA, Rusia Federation, Germany, France and United Kingdom.
 The top 5 countries receiving the least mumber of female migrants are Saint Helena, Tivalu, Tokelau, Niue and Micronesia (Fed. States of).
+
+
+--------------------------------------------------------------------------------
+
+\clearpage
+
+
+#Migrants by destimation country
+
+##Upload the data into Github
+This will ensure that everyone with access to the github repository can easily audit or retest the data. This ensures ease of accessibility and testing by a wide audience. Follow this link to see uploaded Male migrants .csv file (https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv)
+
+```{r message=FALSE, warning=FALSE}
+migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv")
+head(migrants)
+
+#view(head(male_migrants, 20)) # vIew data frame structure and see how many rows to skip.
+```
+
+##Skip first 15 rows
+As part of data cleanup, skip the first 15 rows that include source information not relevant to out analysis.
+
+```{r message=FALSE, warning=FALSE}
+migrants <- read_csv("https://raw.githubusercontent.com/igukusamuel/DATA-607-Project-2/master/UN_MigrantStockBySexByDestination_2019.csv", skip = 15)
+
+head(migrants) #Print out first few rows to confirm that the data have been loaded correctly.
+```
+
+##Filter for N/As in column X5
+Careful review of the data shows that column named X5 only includes data for rows related to countries and N/A's for rows relating to regions and regional totals. Thus filtering out all N/As in column X5 will leave us with country data only, which is the basis of out analysis. We first view all the N/As under column X5 to confirm none of them relate to country information.
+
+```{r message=FALSE, warning=FALSE}
+colX5 <- filter(migrants, is.na(X5))
+
+x <- length(colX5)
+x
+
+head(colX5)
+
+```
+
+
+##Exclude N/As in column X5
+We then exclude all N/A's in column X6 and print out the first 6 rows using the head() function.
+
+```{r message=FALSE, warning=FALSE}
+migrants_by_country <- filter(migrants, !is.na(X5))
+
+head(migrants_by_country)
+```
+
+##Rename column X2
+From the above print out, there is need to rename column X2 dest_country.
+
+```{r message=FALSE, warning=FALSE}
+migrants_by_country <- migrants_by_country %>% 
+        rename(
+                dest_country = X2
+        )
+head(migrants_by_country)
+```
+
+##View all columns
+The above printout shows a number of irrelevant columns that are not necessary for our analysis. Lets print out the entire column names and delete the unnecessary ones to have a cleaner data set.
+```{r message=FALSE, warning=FALSE}
+column_names <- colnames(migrants_by_country)
+#column_names # umcomment to view entire list of column names
+head(column_names)
+```
+
+##Exclude irrelevant columns
+The above print out reveals that we do not need all column names that start with "X". We delete these columns using the srtarts_with function.
+
+```{r message=FALSE, warning=FALSE}
+migrants_by_country <- migrants_by_country %>% 
+        select(-starts_with("X"))
+
+
+migrants_by_country <- migrants_by_country %>% 
+        select(-c(2:8))
+
+migrants_by_country
+```
+
+##View dimentions of resulting data frame
+We use dim() function to have an idea of how many rows and columns we have for our analysis.
+```{r message=FALSE, warning=FALSE}
+dim(migrants_by_country)
+```
+
+##Confrim column names.
+This is what we need for our analysis.
+
+```{r message=FALSE, warning=FALSE}
+column_names_clean <- colnames(migrants_by_country)
+#column_names_clean # uncomment to view entire list of cleaned up column names
+head(column_names_clean)
+
+```
+
+##View number of columns
+Get the length of the column names to be used in the next line of code.
+
+```{r message=FALSE, warning=FALSE}
+y <- length(colnames(migrants_by_country))
+
+y 
+```
+
+##clean up data
+Let us use gather() function to gather all columns with years into a single columns and exclude any and all N/As to obtain clean data. Spread the resulting data by year column and rename "1" as male and "2" as female.
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country <- mutate(gather(migrants_by_country, "year", "no_of_migrants", 2:y, na.rm = TRUE))
+
+head(no_of_migrants_per_country)
+```
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country <- no_of_migrants_per_country %>%
+        separate(year, c("year", "sex"), sep = "_")
+
+no_of_migrants_per_country
+```
+
+Convert the years column to number format
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country$year <- parse_number(no_of_migrants_per_country$year)
+
+no_of_migrants_per_country
+```
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country <- no_of_migrants_per_country %>%
+        spread(sex, no_of_migrants)
+        
+
+names(no_of_migrants_per_country)
+```
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country <- no_of_migrants_per_country %>% 
+        rename(
+                male = "1",
+                female = "2"
+        )
+head(no_of_migrants_per_country)
+
+```
+
+##Conversion of chr to dbl
+convert the no_of_migrants data column from characters to doubles for statistical analysis. This we will do using the parse_number() function. Print out using head() function the first 6 rows and confirm this conversion.
+
+```{r message=FALSE, warning=FALSE}
+no_of_migrants_per_country$male <- parse_number(no_of_migrants_per_country$male)
+no_of_migrants_per_country$female <- parse_number(no_of_migrants_per_country$female)
+
+clean_migrants_data <- no_of_migrants_per_country
+
+head(clean_migrants_data)
+```
+
+#Down stream analysis
+
+##Ordering of data
+Ordering data by country with largest inflow of migrants
+
+```{r message=FALSE, warning=FALSE}
+by_country <- clean_migrants_data %>% 
+        group_by(year, dest_country) %>% 
+        summarise(total_migrants = male + female) %>% 
+        arrange(desc(total_migrants))
+head(by_country)
+```
+
+Ordering the data of male migrants by the destination countries by year
+
+```{r message=FALSE, warning=FALSE}
+male_by_country <- clean_migrants_data %>% 
+        group_by(dest_country, year) %>% 
+        summarise(male = male) %>% 
+        arrange(desc(male))
+head(male_by_country)
+```
+
+Ordering the data of female migrants by the destination countries by year
+```{r message=FALSE, warning=FALSE}
+female_by_country <- clean_migrants_data %>% 
+        group_by(dest_country, year) %>% 
+        summarise(female = female) %>% 
+        arrange(desc(female))
+head(female_by_country)
+```
+
+Ordering the data by % of male migrants by the destination countries by year
+
+```{r message=FALSE, warning=FALSE}
+Perc_male_by_country <- clean_migrants_data %>% 
+        group_by(dest_country, year) %>% 
+        summarise(perc_male = male/(male + female)) %>% 
+        arrange(desc(perc_male))
+head(Perc_male_by_country)
+```
+
+Ordering the data by % female migrants by the destination countries by year
+```{r message=FALSE, warning=FALSE}
+Perc_female_by_country <- clean_migrants_data %>% 
+        group_by(dest_country, year) %>% 
+        summarise(perc_female = female/(male + female)) %>% 
+        arrange(desc(perc_female))
+head(Perc_female_by_country)
+```
+
+#Conclusion
+Maldives received the highest % of male migrants while nepal received the highest % of female migrants
